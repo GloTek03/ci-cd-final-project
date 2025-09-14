@@ -40,7 +40,8 @@ spec:
   steps:
     - name: nosetests
       image: python:3.9-slim
-      workingDir: $(workspaces.source.path)
+      # 🔑 Chỉnh workingDir để vào đúng thư mục chứa requirements.txt
+      workingDir: $(workspaces.source.path)/ci-cd-final-project
       script: |
         #!/bin/bash
         set -e
@@ -65,8 +66,7 @@ spec:
   tasks:
     - name: fetch-repo
       taskRef:
-        kind: ClusterTask
-        name: git-clone
+        name: git-clone        # dùng task git-clone từ Tekton Hub
       workspaces:
         - name: output
           workspace: shared-workspace
@@ -79,8 +79,7 @@ spec:
     - name: run-tests
       taskRef:
         name: nose
-      runAfter:
-        - fetch-repo
+      runAfter: [fetch-repo]
       workspaces:
         - name: source
           workspace: shared-workspace
@@ -91,8 +90,7 @@ spec:
     - name: cleanup
       taskRef:
         name: cleanup
-      runAfter:
-        - run-tests
+      runAfter: [run-tests]
       workspaces:
         - name: source
           workspace: shared-workspace
