@@ -105,7 +105,7 @@ spec:
     - name: args
       value: "-v --with-spec --spec-color --with-coverage --cover-package=app"
     - name: repo-url
-      value: "https://github.com/your-org/ci-cd-final-project.git"
+      value: "https://github.com/GloTek03/ci-cd-final-project.git"
   workspaces:
     - name: shared-workspace
       emptyDir: {}
