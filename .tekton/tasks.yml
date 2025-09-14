@@ -59,16 +59,33 @@ spec:
     - name: args
       type: string
       default: "-v"
+    - name: repo-url
+      type: string
+      description: Git repository URL
   tasks:
+    - name: fetch-repo
+      taskRef:
+        name: git-clone        # dùng task git-clone từ Tekton Hub
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+      params:
+        - name: url
+          value: $(params.repo-url)
+        - name: deleteExisting
+          value: "true"
+
     - name: run-tests
       taskRef:
         name: nose
+      runAfter: [fetch-repo]
       workspaces:
         - name: source
           workspace: shared-workspace
       params:
         - name: args
           value: $(params.args)
+
     - name: cleanup
       taskRef:
         name: cleanup
@@ -87,6 +104,8 @@ spec:
   params:
     - name: args
       value: "-v --with-spec --spec-color --with-coverage --cover-package=app"
+    - name: repo-url
+      value: "https://github.com/your-org/ci-cd-final-project.git"
   workspaces:
     - name: shared-workspace
       emptyDir: {}
